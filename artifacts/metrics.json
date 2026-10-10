@@ -1,0 +1,73 @@
+{
+  "dataset": {
+    "rows": 30000,
+    "features_raw": 23,
+    "default_rate": 0.2212,
+    "test_rows": 7500
+  },
+  "decision": {
+    "missed_default_cost": 5.0,
+    "false_alarm_cost": 1.0,
+    "review_threshold": 0.16666666666666666,
+    "loss_given_default": 0.6
+  },
+  "models": {
+    "logistic_scorecard": {
+      "roc_auc": 0.7571775725605375,
+      "pr_auc": 0.5241840940939273,
+      "brier_score": 0.13965007560561968,
+      "threshold": 0.16666666666666666,
+      "true_negatives": 4103,
+      "false_positives": 1738,
+      "false_negatives": 547,
+      "true_positives": 1112,
+      "recall_default": 0.6702833031946956,
+      "precision_default": 0.39017543859649123
+    },
+    "gradient_boosting": {
+      "roc_auc": 0.7825472778272606,
+      "pr_auc": 0.5610100699758492,
+      "brier_score": 0.1341989576588937,
+      "threshold": 0.16666666666666666,
+      "true_negatives": 3783,
+      "false_positives": 2058,
+      "false_negatives": 431,
+      "true_positives": 1228,
+      "recall_default": 0.7402049427365883,
+      "precision_default": 0.37370663420572126
+    }
+  },
+  "cross_validation_roc_auc": {
+    "logistic_scorecard": {
+      "folds": [
+        0.7761946759641305,
+        0.7569365647521593,
+        0.7576174739603868,
+        0.7624023111276783,
+        0.7708119771467896
+      ],
+      "mean": 0.7647926005902288,
+      "std": 0.0075518665496669
+    },
+    "gradient_boosting": {
+      "folds": [
+        0.7964732789605912,
+        0.7826414103904202,
+        0.7769063577516685,
+        0.7894846558039842,
+        0.7896016458899348
+      ],
+      "mean": 0.7870214697593199,
+      "std": 0.006686728685018992
+    }
+  },
+  "selected_model": "gradient_boosting",
+  "portfolio": {
+    "base_mean_pd": 0.22344753594964722,
+    "stress_mean_pd": 0.3151876655148843,
+    "base_expected_loss_ntd": 130565652.02361593,
+    "stress_expected_loss_ntd": 190574444.03063312,
+    "expected_loss_increase_pct": 45.96062676282058
+  },
+  "protected_attribute_policy": "Sex is excluded from model inputs and used only for post-model auditing."
+}
