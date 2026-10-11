@@ -25,7 +25,7 @@ The final model does not use sex. That variable is retained only for a post-mode
 
 ## Validation design
 
-The data were divided into a stratified 75% training set and 25% held-out test set with a fixed random seed. Model selection used only mean five-fold cross-validation ROC-AUC inside the training set. The test set was reserved for one-time final evaluation. Both candidates were sigmoid-calibrated before that evaluation.
+The data were divided into a stratified 75% training set and 25% held-out test set with a fixed random seed. The corrected pipeline selects by mean five-fold cross-validation ROC-AUC inside the training set. Both candidates are sigmoid-calibrated before test evaluation. Review history: the original script selected using test ROC-AUC; this was corrected, and the same model wins on training cross-validation. Because the test results were already inspected during development, these are retrospective held-out estimates, not a pristine prospective validation. A new external or temporal sample is needed for independent confirmation.
 
 | Model | CV ROC-AUC | Test ROC-AUC | Test PR-AUC | Brier score |
 |---|---:|---:|---:|---:|
