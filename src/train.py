@@ -138,7 +138,9 @@ def main() -> None:
         probabilities[name] = calibrated.predict_proba(X_test)[:, 1]
         candidate_metrics[name] = metric_row(y_test, probabilities[name], DECISION_THRESHOLD)
 
-    chosen_name = max(candidate_metrics, key=lambda n: candidate_metrics[n]["roc_auc"])
+    # Select strictly from training-set cross-validation. The test set remains a
+    # one-time estimate of final generalization performance.
+    chosen_name = max(cv_scores, key=lambda name: np.mean(cv_scores[name]))
     chosen_model = fitted[chosen_name]
     chosen_probability = probabilities[chosen_name]
     top_features = save_evaluation_plots(y_test, probabilities, chosen_name, chosen_model, X_test)
@@ -156,10 +158,20 @@ def main() -> None:
     audit["predicted_pd"] = chosen_probability
     audit["flagged"] = chosen_probability >= DECISION_THRESHOLD
     audit["sex_group"] = audit["sex"].map({1: "male", 2: "female"}).fillna("other")
-    fairness = audit.groupby("sex_group", observed=True).agg(
-        records=("actual", "size"), actual_default_rate=("actual", "mean"),
-        mean_predicted_pd=("predicted_pd", "mean"), review_rate=("flagged", "mean")
-    ).reset_index()
+    fairness_rows = []
+    for group_name, group in audit.groupby("sex_group", observed=True):
+        actual = group["actual"].astype(bool)
+        flagged = group["flagged"].astype(bool)
+        fairness_rows.append({
+            "sex_group": group_name,
+            "records": len(group),
+            "actual_default_rate": group["actual"].mean(),
+            "mean_predicted_pd": group["predicted_pd"].mean(),
+            "review_rate": group["flagged"].mean(),
+            "true_positive_rate": (flagged & actual).sum() / max(1, actual.sum()),
+            "false_positive_rate": (flagged & ~actual).sum() / max(1, (~actual).sum()),
+        })
+    fairness = pd.DataFrame(fairness_rows)
 
     predictions = pd.DataFrame({
         "actual_default": y_test.to_numpy(),
@@ -180,6 +192,7 @@ def main() -> None:
         "models": candidate_metrics,
         "cross_validation_roc_auc": {name: {"folds": vals, "mean": float(np.mean(vals)), "std": float(np.std(vals))} for name, vals in cv_scores.items()},
         "selected_model": chosen_name,
+        "selection_rule": "Highest mean five-fold ROC-AUC on training data; test metrics are not used for selection.",
         "portfolio": {
             "base_mean_pd": float(chosen_probability.mean()),
             "stress_mean_pd": float(stressed_probability.mean()),

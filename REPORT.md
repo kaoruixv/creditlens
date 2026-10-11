@@ -25,7 +25,7 @@ The final model does not use sex. That variable is retained only for a post-mode
 
 ## Validation design
 
-The data were divided into a stratified 75% training set and 25% held-out test set with a fixed random seed. Model selection used five-fold cross-validation inside the training set. Both candidates were sigmoid-calibrated before the final test evaluation.
+The data were divided into a stratified 75% training set and 25% held-out test set with a fixed random seed. Model selection used only mean five-fold cross-validation ROC-AUC inside the training set. The test set was reserved for one-time final evaluation. Both candidates were sigmoid-calibrated before that evaluation.
 
 | Model | CV ROC-AUC | Test ROC-AUC | Test PR-AUC | Brier score |
 |---|---:|---:|---:|---:|
@@ -68,7 +68,7 @@ The model is then rerun on the shocked records. This produces a conditional vuln
 
 ## Protected-attribute audit
 
-Sex was excluded from model inputs. In the held-out sample, the actual default rate was 21.2% for women and 23.5% for men; the model's average predicted probabilities were 22.0% and 22.9%, respectively. At the cost-sensitive threshold, review rates were 42.4% and 45.9%.
+Sex was excluded from model inputs. In the held-out sample, the actual default rate was 21.2% for women and 23.5% for men; the model's average predicted probabilities were 22.0% and 22.9%, respectively. At the cost-sensitive threshold, review rates were 42.4% and 45.9%. The exported audit also reports group-specific true-positive and false-positive rates so differences in error allocation can be inspected directly.
 
 These differences should be monitored, but this two-group comparison is not sufficient to establish fairness. A production review would require current representative data, intersectional analysis, error-rate parity checks, legal review, and monitoring over time.
 

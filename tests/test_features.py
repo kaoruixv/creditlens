@@ -3,6 +3,7 @@ import unittest
 from pathlib import Path
 
 import pandas as pd
+import joblib
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from features import apply_repayment_shock, model_matrix
@@ -31,6 +32,14 @@ class FeatureTests(unittest.TestCase):
         self.assertEqual(stressed["pay_0"].iloc[0], 1)
         self.assertEqual(stressed["bill_amt1"].iloc[0], 550)
         self.assertEqual(stressed["pay_amt1"].iloc[0], 80)
+
+    def test_packaged_model_scores_valid_probabilities(self):
+        root = Path(__file__).resolve().parents[1]
+        bundle = joblib.load(root / "artifacts" / "credit_risk_model.joblib")
+        features = model_matrix(sample())[bundle["feature_columns"]]
+        probability = bundle["model"].predict_proba(features)[0, 1]
+        self.assertGreaterEqual(probability, 0)
+        self.assertLessEqual(probability, 1)
 
 
 if __name__ == "__main__":

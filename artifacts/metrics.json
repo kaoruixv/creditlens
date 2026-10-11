@@ -62,6 +62,7 @@
     }
   },
   "selected_model": "gradient_boosting",
+  "selection_rule": "Highest mean five-fold ROC-AUC on training data; test metrics are not used for selection.",
   "portfolio": {
     "base_mean_pd": 0.22344753594964722,
     "stress_mean_pd": 0.3151876655148843,

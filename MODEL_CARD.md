@@ -26,7 +26,7 @@ Sex is deliberately excluded from the model matrix. It is retained only for a po
 ## Validation
 
 - Stratified 75/25 train-test split with a fixed seed
-- Five-fold cross-validation inside the training data
+- Model selection by five-fold cross-validation inside the training data; test performance is not used for selection
 - Held-out ROC-AUC, PR-AUC, and Brier score
 - Probability calibration using sigmoid calibration
 - Directional stress test
